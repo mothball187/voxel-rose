@@ -1,0 +1,26 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Player\Player.cs">
+    <Files>
+      <File FileName="Assets\Scripts\Player\Chat.cs" Line="88" Column="1" />
+      <File FileName="Assets\Scripts\Player\Player.cs" Line="86" Column="3" />
+      <File FileName="Assets\Scripts\Level\Chunk.cs" Line="62" Column="1" />
+      <File FileName="Assets\Scripts\Level\Spawn.cs" Line="123" Column="63" />
+      <File FileName="Assets\Scripts\Level\Serialization.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Level\World.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Level\LoadChunks.cs" Line="1" Column="1" />
+      <File FileName="c:\Users\Me\Documents\VoxelFun\Assets\Scripts\Level\Terrain.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Player\Connect.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Level\TerrainGen.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Level\Save.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Level\Block.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Level\WorldPos.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Level\Noise.cs" Line="1" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <AuthorInfo Name="Me" Email="" Copyright="Me" Company="Just A Guy Productions" Trademark="" />
+</Properties>
