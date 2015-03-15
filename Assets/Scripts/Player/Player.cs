@@ -26,6 +26,22 @@ public class Player : MonoBehaviour
 	private float serverCurrentYInput=0;
 	private float serverCurrentMouseX=0;
 
+	public double m_InterpolationBackTime = 0.1;
+	public double m_ExtrapolationLimit = 0.5;
+
+	internal struct  State
+	{
+		internal double timestamp;
+		internal Vector3 velocity;
+		internal Vector3 angularVelocity;
+	}
+	
+	// We store twenty states with "playback" information
+	State[] m_BufferedState = new State[20];
+	// Keep track of what slots are used
+	int m_TimestampCount;
+
+
 	void Awake(){
 		// We are probably not the owner of this object: disable this script.
 		// RPC's and OnSerializeNetworkView will STILL get trough!
@@ -174,6 +190,7 @@ public class Player : MonoBehaviour
 				rot.y + mouseY * 3);
 
 
+			SendMovementInput(HInput, VInput, YInput, 0);
 			//Is our input different? Do we need to update the server?
 			if(lastClientHInput!=HInput || lastClientVInput!=VInput || lastClientYInput!=YInput || lastMouseX!=mouseX){
 				lastClientHInput = HInput;
@@ -208,7 +225,62 @@ public class Player : MonoBehaviour
 			}
 
 		}
-
+		else{
+			// This is the target playback time of the rigid body
+			double interpolationTime = Network.time - m_InterpolationBackTime;
+			
+			// Use interpolation if the target playback time is present in the buffer
+			if (m_BufferedState[0].timestamp > interpolationTime)
+			{
+				// Go through buffer and find correct state to play back
+				for (int i=0;i<m_TimestampCount;i++)
+				{
+					if (m_BufferedState[i].timestamp <= interpolationTime || i == m_TimestampCount-1)
+					{
+						// The state one slot newer (<100ms) than the best playback state
+						State rhs = m_BufferedState[Mathf.Max(i-1, 0)];
+						// The best playback state (closest to 100 ms old (default time))
+						State lhs = m_BufferedState[i];
+						
+						// Use the time between the two slots to determine if interpolation is necessary
+						double length = rhs.timestamp - lhs.timestamp;
+						float t = 0.0F;
+						// As the time difference gets closer to 100 ms t gets closer to 1 in 
+						// which case rhs is only used
+						// Example:
+						// Time is 10.000, so sampleTime is 9.900 
+						// lhs.time is 9.910 rhs.time is 9.980 length is 0.070
+						// t is 9.900 - 9.910 / 0.070 = 0.14. So it uses 14% of rhs, 86% of lhs
+						if (length > 0.0001){
+							t = (float)((interpolationTime - lhs.timestamp) / length);
+						}
+						//	Debug.Log(t);
+						// if t=0 => lhs is used directly
+						transform.position = Vector3.Lerp(lhs.velocity, rhs.velocity, t);
+						transform.rotation = Quaternion.Slerp(Quaternion.Euler(lhs.angularVelocity), Quaternion.Euler(rhs.angularVelocity), t);
+						return;
+					}
+				}
+			}
+			// Use extrapolation
+			else
+			{
+				State latest = m_BufferedState[0];
+				
+				float extrapolationLength = (float)(interpolationTime - latest.timestamp);
+				// Don't extrapolation for more than 500 ms, you would need to do that carefully
+				if (extrapolationLength < m_ExtrapolationLimit)
+				{
+					float axisLength = extrapolationLength * latest.angularVelocity.magnitude * Mathf.Rad2Deg;
+					Quaternion angularRotation = Quaternion.AngleAxis(axisLength, latest.angularVelocity);
+					
+					transform.position = latest.velocity + latest.velocity * extrapolationLength;
+					transform.rotation = angularRotation * Quaternion.Euler(latest.angularVelocity);
+					//rigidbody.velocity = latest.velocity;
+					//rigidbody.angularVelocity = latest.angularVelocity;
+				}
+			}
+		}
 
 		//Server movement code
 		if(Network.isServer || Network.player==owner){
@@ -251,19 +323,53 @@ public class Player : MonoBehaviour
 		}else{
 			//Executed on all non-owners
 			//This client receive a position and set the object to it
-			
-			Vector3 posReceive = Vector3.zero;
-			Quaternion rotReceive = Quaternion.identity;
-			stream.Serialize( ref posReceive); //"Decode" it and receive it
-			stream.Serialize(ref rotReceive);
-			//Debug.Log("position receive: "+posReceive.x+","+posReceive.y+","+posReceive.z);
-			//We've just recieved the current servers position of this object in 'posReceive'.
-			
-			//transform.position = posReceive;		
-			//To reduce laggy movement a bit you could comment the line above and use position lerping below instead:	
-			transform.position = Vector3.Lerp(transform.position, posReceive, 0.9f); //"lerp" to the posReceive by 90%
-			transform.localRotation = rotReceive;
-			
+			if(Network.player==owner){
+				Vector3 posReceive = Vector3.zero;
+				Quaternion rotReceive = Quaternion.identity;
+				stream.Serialize( ref posReceive); //"Decode" it and receive it
+				stream.Serialize(ref rotReceive);
+				//Debug.Log("position receive: "+posReceive.x+","+posReceive.y+","+posReceive.z);
+				//We've just recieved the current servers position of this object in 'posReceive'.
+		
+				transform.position = Vector3.Lerp(transform.position, posReceive, Time.deltaTime * 5);
+				transform.localRotation = rotReceive;
+			}
+			else{
+				enabled = true;
+				Vector3 velocity = Vector3.zero;
+				Vector3 angularVelocity = Vector3.zero;
+				stream.Serialize(ref velocity);
+				stream.Serialize(ref angularVelocity);
+				
+				// Shift the buffer sideways, deleting state 20
+				for (int i=m_BufferedState.Length-1;i>=1;i--)
+				{
+					m_BufferedState[i] = m_BufferedState[i-1];
+				}
+				
+				// Record current state in slot 0
+				State state = new State();
+				state.timestamp = info.timestamp;
+				state.velocity = velocity;
+				state.angularVelocity = angularVelocity;
+				m_BufferedState[0] = state;
+				
+				// Update used slot count, however never exceed the buffer size
+				// Slots aren't actually freed so this just makes sure the buffer is
+				// filled up and that uninitalized slots aren't used.
+				m_TimestampCount = Mathf.Min(m_TimestampCount + 1, m_BufferedState.Length);
+				
+				// Check if states are in order, if it is inconsistent you could reshuffel or 
+				// drop the out-of-order state. Nothing is done here
+				/*
+				for (int i=0;i<m_TimestampCount-1;i++)
+				{
+					if (m_BufferedState[i].timestamp < m_BufferedState[i+1].timestamp)
+						Debug.Log("State inconsistent");
+				}	
+				*/
+			}
+
 		}
 	}
 

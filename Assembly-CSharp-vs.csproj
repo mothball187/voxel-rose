@@ -5,7 +5,7 @@
 	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
 	<ProductVersion>10.0.20506</ProductVersion>
 	<SchemaVersion>2.0</SchemaVersion>
-	<ProjectGuid>{FB15B7CA-B511-FF5A-98F0-69955C702B2B}</ProjectGuid>
+	<ProjectGuid>{F68AD212-7AED-64E1-62EA-9E01887A9702}</ProjectGuid>
 	<OutputType>Library</OutputType>
 	<AppDesignerFolder>Properties</AppDesignerFolder>
 	<RootNamespace></RootNamespace>
@@ -62,7 +62,6 @@
      <Compile Include="Assets\Scripts\Level\WorldPos.cs" />
      <Compile Include="Assets\Scripts\Player\Chat.cs" />
      <Compile Include="Assets\Scripts\Player\Connect.cs" />
-     <Compile Include="Assets\Scripts\Player\NamePlate.cs" />
      <Compile Include="Assets\Scripts\Player\Player.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files (x86)/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/4.6.1/UnityEngine.UI.dll</HintPath>
