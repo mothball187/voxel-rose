@@ -79,6 +79,11 @@ public class Spawn : MonoBehaviour {
 		networkView.RPC("ApplyGlobalChatText", RPCMode.Others, "", str);
 		foreach(Player script in playerScripts){
 			if(player==script.owner){//We found the players object
+				string pname = script.playerName;
+				RemoveClosePlayer(script);
+				script.networkView.RPC("SetClosePlayer", RPCMode.Others, 0);
+				RemoveNameplate(pname);
+				networkView.RPC("RemoveNameplate", RPCMode.Others, pname);
 				Network.RemoveRPCs(script.gameObject.networkView.viewID);//remove the bufferd SetPlayer call
 				Network.Destroy(script.gameObject);//Destroying the GO will destroy everything
 				playerScripts.Remove(script);//Remove this player from the list
@@ -100,6 +105,26 @@ public class Spawn : MonoBehaviour {
 	void OnDisconnectedFromServer(NetworkDisconnection info) {
 		Debug.Log("Resetting the scene the easy way.");
 		Application.LoadLevel(Application.loadedLevel);	
+	}
+
+	void RemoveClosePlayer(Player player){
+		for(int i=0; i < closePlayers.Count; i++) {
+			string close = (string)closePlayers[i];
+			if(close.Contains(player.owner.guid)){
+				closePlayers.RemoveAt(i);
+				i--;
+			}
+		}
+	}
+
+	[RPC]
+	public void RemoveNameplate(string playerName){
+		foreach (GUIText txt in GameObject.FindObjectsOfType(typeof(GUIText))) {
+			if(txt.text == playerName){
+				Destroy(txt.gameObject);
+				break;
+			}
+		}
 	}
 
 

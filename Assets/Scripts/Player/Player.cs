@@ -105,13 +105,15 @@ public class Player : MonoBehaviour
 	void SetName(string name, NetworkMessageInfo info)
 	{
 		playerName = name;
-		nameplate = Instantiate (nameplatePrefab, new Vector3(0.5f, 0.5f, 0), Quaternion.identity) as GameObject;
-		nameplate.guiText.enabled = false;
-		nameplate.guiText.text = name;
-		nameplate.guiText.alignment = TextAlignment.Center;
-		nameplate.guiText.anchor = TextAnchor.UpperCenter;
 
-		if (Network.isServer) {
+		if(Network.isClient){
+			nameplate = Instantiate (nameplatePrefab, new Vector3(0.5f, 0.5f, 0), Quaternion.identity) as GameObject;
+			nameplate.guiText.enabled = false;
+			nameplate.guiText.text = name;
+			nameplate.guiText.alignment = TextAlignment.Center;
+			nameplate.guiText.anchor = TextAnchor.UpperCenter;
+		}
+		else {
 			networkView.RPC("SetName", RPCMode.OthersBuffered, name);
 		}
 	}
@@ -204,6 +206,8 @@ public class Player : MonoBehaviour
 
 			//nameplate fun
 			foreach(GameObject go in GameObject.FindGameObjectsWithTag("close")){
+				if(go == null)
+					break;
 				Player player = go.GetComponent<Player>();
 				if(player.renderer.isVisible){
 					RaycastHit hit;
@@ -225,6 +229,7 @@ public class Player : MonoBehaviour
 			}
 
 		}
+		/*
 		else{
 			// This is the target playback time of the rigid body
 			double interpolationTime = Network.time - m_InterpolationBackTime;
@@ -281,7 +286,7 @@ public class Player : MonoBehaviour
 				}
 			}
 		}
-
+		*/
 		//Server movement code
 		if(Network.isServer || Network.player==owner){
 			//Actually move the player using his/her input
@@ -323,17 +328,21 @@ public class Player : MonoBehaviour
 		}else{
 			//Executed on all non-owners
 			//This client receive a position and set the object to it
-			if(Network.player==owner){
+			//if(Network.player==owner){
 				Vector3 posReceive = Vector3.zero;
 				Quaternion rotReceive = Quaternion.identity;
 				stream.Serialize( ref posReceive); //"Decode" it and receive it
 				stream.Serialize(ref rotReceive);
 				//Debug.Log("position receive: "+posReceive.x+","+posReceive.y+","+posReceive.z);
 				//We've just recieved the current servers position of this object in 'posReceive'.
-		
-				transform.position = Vector3.Lerp(transform.position, posReceive, Time.deltaTime * 5);
+				if(Network.player == owner)
+					transform.position = Vector3.Lerp(transform.position, posReceive, Time.deltaTime * 5);
+				else
+					transform.position = posReceive;
+
 				transform.localRotation = rotReceive;
-			}
+			//}
+			/*
 			else{
 				enabled = true;
 				Vector3 velocity = Vector3.zero;
@@ -361,15 +370,15 @@ public class Player : MonoBehaviour
 				
 				// Check if states are in order, if it is inconsistent you could reshuffel or 
 				// drop the out-of-order state. Nothing is done here
-				/*
+
 				for (int i=0;i<m_TimestampCount-1;i++)
 				{
 					if (m_BufferedState[i].timestamp < m_BufferedState[i+1].timestamp)
 						Debug.Log("State inconsistent");
 				}	
-				*/
-			}
 
+			}
+		*/
 		}
 	}
 

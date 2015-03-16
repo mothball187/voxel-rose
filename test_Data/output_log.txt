@@ -30,12 +30,7 @@ Platform assembly: C:\Users\Me\Documents\GitHub\voxel-rose\test_Data\Managed\Ass
 Loading C:\Users\Me\Documents\GitHub\voxel-rose\test_Data\Managed\Assembly-CSharp.dll into Unity Child Domain
 Platform assembly: C:\Users\Me\Documents\GitHub\voxel-rose\test_Data\Managed\UnityEngine.UI.dll (this message is harmless)
 Loading C:\Users\Me\Documents\GitHub\voxel-rose\test_Data\Managed\UnityEngine.UI.dll into Unity Child Domain
-- Completed reload, in  0.039 seconds
-Platform assembly: C:\Users\Me\Documents\GitHub\voxel-rose\test_Data\Managed\System.Core.dll (this message is harmless)
-Profiler is only supported with Pro License
- 
-(Filename: C:/BuildAgent/work/d63dfc6385190b60/Runtime/Profiler/ProfilerConnection.cpp Line: 218)
-
+- Completed reload, in  0.038 seconds
 desktop: 1680x1050 59Hz; virtual: 1680x1050 at 0,0
 <RI> Initializing input.
 <RI> Input initialized.
@@ -44,62 +39,77 @@ Profiler is only supported with Pro License
  
 (Filename: C:/BuildAgent/work/d63dfc6385190b60/Runtime/Profiler/ProfilerConnection.cpp Line: 218)
 
+Platform assembly: C:\Users\Me\Documents\GitHub\voxel-rose\test_Data\Managed\System.Core.dll (this message is harmless)
+Profiler is only supported with Pro License
+ 
+(Filename: C:/BuildAgent/work/d63dfc6385190b60/Runtime/Profiler/ProfilerConnection.cpp Line: 218)
+
 This CLIENT has connected to a server
 UnityEngine.Debug:Internal_Log(Int32, String, Object)
 UnityEngine.Debug:Log(Object)
-Connect:OnConnectedToServer() (at C:\Users\Me\Documents\VoxelFun\Assets\Scripts\Player\Connect.cs:94)
+Connect:OnConnectedToServer() (at C:\Users\Me\Documents\GitHub\voxel-rose\Assets\Scripts\Player\Connect.cs:94)
  
 (Filename: C Line: 0)
 
 This CLIENT has connected to a server
 UnityEngine.Debug:Internal_Log(Int32, String, Object)
 UnityEngine.Debug:Log(Object)
-Connect:OnConnectedToServer() (at C:\Users\Me\Documents\VoxelFun\Assets\Scripts\Player\Connect.cs:94)
+Connect:OnConnectedToServer() (at C:\Users\Me\Documents\GitHub\voxel-rose\Assets\Scripts\Player\Connect.cs:94)
+ 
+(Filename: C Line: 0)
+
+NullReferenceException: Object reference not set to an instance of an object
+  at Player.Update () [0x003d4] in C:\Users\Me\Documents\GitHub\voxel-rose\Assets\Scripts\Player\Player.cs:220 
  
 (Filename: C Line: 0)
 
 Resetting the scene the easy way.
 UnityEngine.Debug:Internal_Log(Int32, String, Object)
 UnityEngine.Debug:Log(Object)
-Spawn:OnDisconnectedFromServer(NetworkDisconnection) (at C:\Users\Me\Documents\VoxelFun\Assets\Scripts\Level\Spawn.cs:101)
+Spawn:OnDisconnectedFromServer(NetworkDisconnection) (at C:\Users\Me\Documents\GitHub\voxel-rose\Assets\Scripts\Level\Spawn.cs:106)
+UnityEngine.Network:Disconnect(Int32)
+Connect:OnGUI() (at C:\Users\Me\Documents\GitHub\voxel-rose\Assets\Scripts\Player\Connect.cs:82)
  
 (Filename: C Line: 0)
 
 This SERVER OR CLIENT has disconnected from a server
 UnityEngine.Debug:Internal_Log(Int32, String, Object)
 UnityEngine.Debug:Log(Object)
-Connect:OnDisconnectedFromServer(NetworkDisconnection) (at C:\Users\Me\Documents\VoxelFun\Assets\Scripts\Player\Connect.cs:98)
+Connect:OnDisconnectedFromServer(NetworkDisconnection) (at C:\Users\Me\Documents\GitHub\voxel-rose\Assets\Scripts\Player\Connect.cs:98)
+UnityEngine.Network:Disconnect(Int32)
+Connect:OnGUI() (at C:\Users\Me\Documents\GitHub\voxel-rose\Assets\Scripts\Player\Connect.cs:82)
  
 (Filename: C Line: 0)
 
-Resetting the scene the easy way.
-UnityEngine.Debug:Internal_Log(Int32, String, Object)
-UnityEngine.Debug:Log(Object)
-Spawn:OnDisconnectedFromServer(NetworkDisconnection) (at C:\Users\Me\Documents\VoxelFun\Assets\Scripts\Level\Spawn.cs:101)
- 
-(Filename: C Line: 0)
-
-This SERVER OR CLIENT has disconnected from a server
-UnityEngine.Debug:Internal_Log(Int32, String, Object)
-UnityEngine.Debug:Log(Object)
-Connect:OnDisconnectedFromServer(NetworkDisconnection) (at C:\Users\Me\Documents\VoxelFun\Assets\Scripts\Player\Connect.cs:98)
- 
-(Filename: C Line: 0)
-
-UnloadTime: 19.601551 ms
-System memory in use before: 90.8 MB.
-UnloadTime: 19.646698 ms
-System memory in use before: 89.3 MB.
-Unloading 3 Unused Serialized files (Serialized files now loaded: 0 / Dirty serialized files: 0)
-System memory in use after: 11.3 MB.
-
-Unloading 4306 unused Assets to reduce memory usage. Loaded Objects now: 195.
-Total: 17.592728 ms (FindLiveObjects: 0.097335 ms CreateObjectMapping: 0.399267 ms MarkObjects: 0.132235 ms  DeleteObjects: 16.544773 ms)
-
+UnloadTime: 19.538033 ms
+System memory in use before: 92.4 MB.
 Unloading 3 Unused Serialized files (Serialized files now loaded: 0 / Dirty serialized files: 0)
 System memory in use after: 11.2 MB.
 
-Unloading 4226 unused Assets to reduce memory usage. Loaded Objects now: 195.
-Total: 19.012096 ms (FindLiveObjects: 0.101817 ms CreateObjectMapping: 0.405030 ms MarkObjects: 0.151446 ms  DeleteObjects: 17.909069 ms)
+Unloading 4466 unused Assets to reduce memory usage. Loaded Objects now: 204.
+Total: 17.595818 ms (FindLiveObjects: 0.097014 ms CreateObjectMapping: 0.410791 ms MarkObjects: 0.149844 ms  DeleteObjects: 16.515850 ms)
+
+Waiting for finish
+Resetting the scene the easy way.
+UnityEngine.Debug:Internal_Log(Int32, String, Object)
+UnityEngine.Debug:Log(Object)
+Spawn:OnDisconnectedFromServer(NetworkDisconnection) (at C:\Users\Me\Documents\GitHub\voxel-rose\Assets\Scripts\Level\Spawn.cs:106)
+ 
+(Filename: C Line: 0)
+
+This SERVER OR CLIENT has disconnected from a server
+UnityEngine.Debug:Internal_Log(Int32, String, Object)
+UnityEngine.Debug:Log(Object)
+Connect:OnDisconnectedFromServer(NetworkDisconnection) (at C:\Users\Me\Documents\GitHub\voxel-rose\Assets\Scripts\Player\Connect.cs:98)
+ 
+(Filename: C Line: 0)
+
+UnloadTime: 18.852203 ms
+System memory in use before: 89.1 MB.
+Unloading 3 Unused Serialized files (Serialized files now loaded: 0 / Dirty serialized files: 0)
+System memory in use after: 11.2 MB.
+
+Unloading 4242 unused Assets to reduce memory usage. Loaded Objects now: 195.
+Total: 17.253225 ms (FindLiveObjects: 0.154967 ms CreateObjectMapping: 0.466822 ms MarkObjects: 0.178340 ms  DeleteObjects: 15.916154 ms)
 
 Waiting for finish
