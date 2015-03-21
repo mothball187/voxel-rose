@@ -12,6 +12,7 @@ public class Player : MonoBehaviour
 	public GameObject nameplate;
 	public GameObject nameplatePrefab;
 	private Camera mycam;
+	private bool receivedUpdate = false;
 
 	
 	//Last input value, we're saving this to save network messages/bandwidth.
@@ -32,8 +33,8 @@ public class Player : MonoBehaviour
 	internal struct  State
 	{
 		internal double timestamp;
-		internal Vector3 velocity;
-		internal Vector3 angularVelocity;
+		internal Vector3 pos;
+		internal Vector3 rot;
 	}
 	
 	// We store twenty states with "playback" information
@@ -229,8 +230,8 @@ public class Player : MonoBehaviour
 			}
 
 		}
-		/*
-		else{
+
+		else if(Network.isServer == false && receivedUpdate){
 			// This is the target playback time of the rigid body
 			double interpolationTime = Network.time - m_InterpolationBackTime;
 			
@@ -261,13 +262,14 @@ public class Player : MonoBehaviour
 						}
 						//	Debug.Log(t);
 						// if t=0 => lhs is used directly
-						transform.position = Vector3.Lerp(lhs.velocity, rhs.velocity, t);
-						transform.rotation = Quaternion.Slerp(Quaternion.Euler(lhs.angularVelocity), Quaternion.Euler(rhs.angularVelocity), t);
+						transform.position = Vector3.Lerp(lhs.pos, rhs.pos, t);
+						//transform.localRotation = Quaternion.Slerp(Quaternion.Euler(lhs.rot), Quaternion.Euler(rhs.rot), t);
 						return;
 					}
 				}
 			}
 			// Use extrapolation
+			/*
 			else
 			{
 				State latest = m_BufferedState[0];
@@ -276,17 +278,20 @@ public class Player : MonoBehaviour
 				// Don't extrapolation for more than 500 ms, you would need to do that carefully
 				if (extrapolationLength < m_ExtrapolationLimit)
 				{
-					float axisLength = extrapolationLength * latest.angularVelocity.magnitude * Mathf.Rad2Deg;
-					Quaternion angularRotation = Quaternion.AngleAxis(axisLength, latest.angularVelocity);
+					float axisLength = extrapolationLength * latest.rot.magnitude * Mathf.Rad2Deg;
+					Quaternion rot = Quaternion.AngleAxis(axisLength, latest.rot);
 					
-					transform.position = latest.velocity + latest.velocity * extrapolationLength;
-					transform.rotation = angularRotation * Quaternion.Euler(latest.angularVelocity);
+					transform.position = latest.pos + latest.pos * extrapolationLength;
+					//transform.localRotation = rot;
 					//rigidbody.velocity = latest.velocity;
 					//rigidbody.angularVelocity = latest.angularVelocity;
 				}
 			}
+*/
+			receivedUpdate = false;
+
 		}
-		*/
+
 		//Server movement code
 		if(Network.isServer || Network.player==owner){
 			//Actually move the player using his/her input
@@ -328,7 +333,7 @@ public class Player : MonoBehaviour
 		}else{
 			//Executed on all non-owners
 			//This client receive a position and set the object to it
-			//if(Network.player==owner){
+			if(Network.player==owner){
 				Vector3 posReceive = Vector3.zero;
 				Quaternion rotReceive = Quaternion.identity;
 				stream.Serialize( ref posReceive); //"Decode" it and receive it
@@ -341,15 +346,16 @@ public class Player : MonoBehaviour
 					transform.position = posReceive;
 
 				transform.localRotation = rotReceive;
-			//}
-			/*
+			}
+
 			else{
 				enabled = true;
-				Vector3 velocity = Vector3.zero;
-				Vector3 angularVelocity = Vector3.zero;
-				stream.Serialize(ref velocity);
-				stream.Serialize(ref angularVelocity);
-				
+				receivedUpdate = true;
+				Vector3 pos = Vector3.zero;
+				Quaternion rot = Quaternion.identity;
+				stream.Serialize(ref pos);
+				stream.Serialize(ref rot);
+				transform.localRotation = rot;
 				// Shift the buffer sideways, deleting state 20
 				for (int i=m_BufferedState.Length-1;i>=1;i--)
 				{
@@ -359,8 +365,8 @@ public class Player : MonoBehaviour
 				// Record current state in slot 0
 				State state = new State();
 				state.timestamp = info.timestamp;
-				state.velocity = velocity;
-				state.angularVelocity = angularVelocity;
+				state.pos = pos;
+				//state.rot = rot;
 				m_BufferedState[0] = state;
 				
 				// Update used slot count, however never exceed the buffer size
@@ -371,14 +377,15 @@ public class Player : MonoBehaviour
 				// Check if states are in order, if it is inconsistent you could reshuffel or 
 				// drop the out-of-order state. Nothing is done here
 
+				/*
 				for (int i=0;i<m_TimestampCount-1;i++)
 				{
 					if (m_BufferedState[i].timestamp < m_BufferedState[i+1].timestamp)
 						Debug.Log("State inconsistent");
 				}	
-
+*/
 			}
-		*/
+		
 		}
 	}
 
